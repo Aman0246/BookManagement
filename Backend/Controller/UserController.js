@@ -20,7 +20,7 @@ let registration = async (req, res) => {
       !isValid(email) ||
       !isValid(password)
     )
-      return res.status(400).send({ status: false, message: "Empty filde " });
+      return res.status(400).send({ status: false, message: "Empty filde or not in string" });
 
       
 
@@ -62,7 +62,7 @@ let registration = async (req, res) => {
         .status(400)
         .send({
           status: false,
-          message: "    ",
+          message: "password must be 8 to 15  character long a-z and number ",
         });
 
 
