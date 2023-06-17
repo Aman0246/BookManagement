@@ -1,22 +1,27 @@
 const { default: mongoose } = require("mongoose");
 
 const BookSchema = new mongoose.Schema(
-    {
-        title: {type:String, require:true, unique:true},
-        excerpt: {type:String, require:true}, 
-        userId: {type:mongoose.Schema.Types.ObjectId, require:true, ref:"UserModel"},
-        ISBN: {type:String, require:true, unique:true},
-        category: {type:String, require:true},
-        subcategory: {type:String, require:true},
-        reviews: {type:Number, default: 0},
-        // comment: Holds number of reviews of this book
-        deletedAt: {type:Date}, 
-        isDeleted: {type:Boolean, default: false},
-        releasedAt: {type:Date, require:true},
-   },
-    { timestamps: true }
-  );  
-  
-  const BookModel = new mongoose.model("BookModel", BookSchema);
-  
-  module.exports = { BookModel };
+  {
+    title: { type: String, required: true, unique: true, trim: true },
+    excerpt: { type: String, required: true, trim: true },
+    userId: {
+      type: mongoose.Schema.Types.ObjectId,
+      required: true,
+      ref: "UserModel",
+      trim: true,
+    },
+    ISBN: { type: String, required: true, unique: true, trim: true },
+    category: { type: String, required: true, trim: true },
+    subcategory: { type: String, required: true, trim: true },
+    reviews: { type: Number, default: 0, trim: true },
+    // comment: Holds number of reviews of this book
+    deletedAt: { type: Date, trim: true },
+    isDeleted: { type: Boolean, default: false, trim: true },
+    releasedAt: { type: Date, required: true, trim: true },
+  },
+  { timestamps: true }
+);
+
+const BookModel = new mongoose.model("BookModel", BookSchema);
+
+module.exports = { BookModel };
