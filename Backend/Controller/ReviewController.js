@@ -1,46 +1,156 @@
-const {ReviewModel}=require("../Models/ReviewModel")
-const{BookModel}=require("../Models/BookModel")
+let {ReviewModel}=require("../Models/ReviewModel")
+let{BookModel}=require("../Models/BookModel");
+let { isValidObjectId } = require("mongoose");
+let{isValid,validString}=require("../Utils")
 
-const addReviewToBook=async(req,res)=>{
-    const { bookId } = req.params;
-    const { review, rating, reviewedBy, } = req.body;
+//===================================================================================================================
+//===================================================================================================================
+//===================================================================================================================
+
+let addReviewToBook=async(req,res)=>{
+  try {
+    let { bookId } = req.params;
     
-    // bookId: {type:mongoose.Schema.Types.ObjectId, required:true, refs:"BookModel",trim:true  },
-    // reviewedBy: {type:String, required:true, default:'Guest',trim:true  },
-    // // , value: reviewer's name
-    // reviewedAt: {type:Date, required:true},
-    // rating: {type:Number, min:1, max:5, required:true,trim:true  },
-    // review: {type:String, required:true,trim:true },
-    // isDeleted: {type:Boolean, default: false}
+    if(!isValidObjectId(bookId))return res.status(400).send({status:false,message: "bookid is not valid"})
 
-//     ### POST /books/:bookId/review
-// - Add a review for the book in reviews collection.
-// - Check if the bookId exists and is not deleted before adding the review. Send an error response with appropirate status code like [this](#error-response-structure) if the book does not exist
-// - Get review details like review, rating, reviewer's name in request body.
-// - Update the related book document by increasing its review count
-// - Return the updated book document with reviews data on successful operation. The response body should be in the form of JSON object like [this](#Review-Response-Structure)
-  
-    try {
-      // Check if the bookId exists and is not deleted
-      const book = await BookModel.findOneAndUpdate(
-        { _id: bookId, isDeleted: false },
-        {
-          $push: { reviews: { review, rating, reviewerName } },
-          $inc: { reviewCount: 1 }
-        },
-        { new: true }
-      );
-  
+
+    let { review, rating, reviewerName } = req.body;
+
+
+    if(!review)return res.status(400).send({status:false,message:"please provide review"})
+     if(!isValid(review))return res.status(400).send({status:false,message:"lease provide review in string as it coontp"})
+
+    
+ 
+     if(!rating)return res.status(400).send({status:false,message:"please provide rating"})
+     if(typeof rating!="number" || rating >6 || rating<0)return res.status(400).send({status:false,message:"please provide rating in number and  between  1 to 5"})
+
+
+
+     if(!reviewerName)return res.status(400).send({status:false,message:"please provide reviewerName"})
+     if(!isValid(reviewerName))return res.status(400).send({status:false,message:"please provide reviewerName in string"})
+     if(!validString(reviewerName))return res.status(400).send({status:false,message:" reviewerName : name contain number"})
+
+
+    
+      let CreateReview=await ReviewModel.create({ review, rating, reviewedBy:reviewerName,bookId:bookId})
+         console.log(CreateReview)
+
+
+
+            let book = await BookModel.findOne({ _id: bookId, isDeleted: false });
+
+
+
+
       if (!book) {
-        // Book not found or already deleted
         return res.status(404).send({status:false, message: 'Book not found' });
       }
-  
-      // Return the updated book document with reviews data
-      return res.status(200).json({ book });
+      book.reviews++
+      await book.save()
+      book=book.toObject()
+      book.reviewsData=CreateReview
+
+
+
+      return res.status(200).send({status:true,message:"Review added successfully",data:book });
     } catch (error) {
-      // Handle any errors that occurred during the process
-      console.error('Error adding review to book:', error);
-      return res.status(500).json({ error: 'An internal server error occurred' });
+      return res.status(500).send({status:false , message:error});
     }
 }
+
+//=========================================================================================================================================================
+//=========================================================================================================================================================
+//=========================================================================================================================================================
+
+let updateReview =async(req,res)=>{
+  try {
+    let{bookId,reviewId}=req.params
+    
+
+    if(!isValidObjectId(bookId))return res.status(400).send({status:false,message: "bookid is not valid"})
+    if(!isValidObjectId(reviewId))return res.status(400).send({status:false,message: "reviewId is not valid"})
+        
+
+    let book = await BookModel.findOne({ _id: bookId, isDeleted: false });
+    if(!book)return res.status(400).send({status:false,message:"book is not avavliable"})
+ 
+     
+    let reviews = await ReviewModel.findOne({ _id: reviewId, isDeleted: false });
+    if(!reviews)return res.status(400).send({status:false,message:"review is not avavliable"})
+    
+
+
+    let{review, rating, reviewerName }=req.body
+    
+    
+    
+     if(review){
+    if(!isValid(review))return res.status(400).send({status:false,message:"lease provide review in string as it coontp"})
+    reviews.review=review
+     }
+    
+     if(rating){
+    if(typeof rating!="number" || rating >6 || rating<0)return res.status(400).send({status:false,message:"please provide rating in number and  between  1 to 5"})
+    reviews.rating=rating
+  }
+   if(reviewerName){
+    if(!isValid(reviewerName))return res.status(400).send({status:false,message:"please provide reviewerName in string"})
+    if(!validString(reviewerName))return res.status(400).send({status:false,message:" reviewerName : name contain number"})
+    reviews.reviewedBy=reviewerName
+   }
+    
+   
+
+
+    // Save the updated book document
+    await reviews.save();
+     
+   book= book.toObject()
+   let reviewsData =await ReviewModel.find({bookId,isDeleted:false})
+   book.reviewsData=reviewsData
+    
+
+    return res.status(200).send({status:true,message:"Updated Successfully" ,Data:book });
+
+    
+  } catch (error) {
+    return res.status(500).send({status:false , message:error});
+  }
+}
+
+//=========================================================================================================================================================
+//=========================================================================================================================================================
+//=========================================================================================================================================================
+let deleteReview =async(req,res)=>{
+  try {
+    let{bookId,reviewId}=req.params
+    
+
+    if(!isValidObjectId(bookId))return res.status(400).send({status:false,message: "bookid is not valid"})
+    if(!isValidObjectId(reviewId))return res.status(400).send({status:false,message: "bookid is not valid"})
+        
+
+    let book = await BookModel.findOne({ _id: bookId, isDeleted: false });
+    if(!book)return res.status(400).send({status:false,message:"book is not avavliable"})
+    
+    
+    let reviews = await ReviewModel.findOne({ _id: reviewId, isDeleted: false });
+    if(!reviews)return res.status(400).send({status:false,message:"review is not avavliable"})
+
+
+    reviews.isDeleted=true
+    book.reviews--
+
+    await reviews.save();
+    await book.save();
+
+    return res.status(200).send({status:true,message:"Review Deleted"});
+
+  } catch (error) {
+    return res.status(500).send({status:false , message:error}); 
+  }
+}
+
+
+module.exports={addReviewToBook,updateReview,deleteReview }

@@ -5,8 +5,11 @@ function isValid (data) {
     else return true
 }
 
+// function validString(input){
+//     return (/^[a-zA-Z]+$/.test(input))
+// }
 function validString(input){
-    return (/^[a-zA-Z]+$/.test(input))
+    return (/^[a-z ,.'-]+$/i.test(input))
 }
 
 const validateEmail = (email) => {
@@ -31,4 +34,8 @@ const validPin=(pincode)=>{
     return pinco.test(pincode)
 }
 
-module.exports= {isValid,validString,validateEmail,isValidPassword,trim,validPhone,validPin}
+const ValidISBN=(isbn)=>{
+    return (/^(?:ISBN(?:-1[03])?:? )?(?=[-0-9Xx]{17}$|[-0-9Xx]{13}$|[0-9Xx]{10}$)(?:97[89][- ]?)?[0-9]{1,5}[- ]?(?:[0-9]+[- ]?){2}[0-9Xx]$/i.test(isbn))
+}
+
+module.exports= {isValid,validString,validateEmail,isValidPassword,trim,validPhone,validPin,ValidISBN}

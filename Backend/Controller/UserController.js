@@ -85,7 +85,7 @@ let registration = async (req, res) => {
       let newuser = await UserModel.create(req.body);
       return res
         .status(201)
-        .send({ status: true, message: "user Created", user: newuser });
+        .send({ status: true, data: newuser });
     }
 
 
@@ -126,11 +126,11 @@ let login=async(req,res)=>{
       if(user.password!=password)  return res.status(400).send({ status: false, message: "Wrong Password" })
 
       var token = jwt.sign({ userid:user._id}, 'shhhhh',{expiresIn: '2d'});
-      // res.cookie("token",token)
-      res.setHeader("token",token)
+      res.cookie("token",token)
+      // res.setHeader("token",token)
 
       
-      res.status(200).send({ status: true,data:token });
+      res.status(200).send({ status: true,data:{"token":token} });
 
         
     } catch (error) {
