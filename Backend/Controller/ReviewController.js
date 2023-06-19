@@ -10,8 +10,18 @@ let{isValid,validString}=require("../Utils")
 let addReviewToBook=async(req,res)=>{
   try {
     let { bookId } = req.params;
-    
+    if(!bookId) return res.status(400).send({status:false,message:"BookId is not in params"})
     if(!isValidObjectId(bookId))return res.status(400).send({status:false,message: "bookid is not valid"})
+
+    
+    let book = await BookModel.findOne({ _id: bookId, isDeleted: false });
+
+
+
+
+    if (!book) {
+      return res.status(404).send({status:false, message: 'Book not found' });
+    }
 
 
     let { review, rating, reviewerName } = req.body;
@@ -38,14 +48,6 @@ let addReviewToBook=async(req,res)=>{
 
 
 
-            let book = await BookModel.findOne({ _id: bookId, isDeleted: false });
-
-
-
-
-      if (!book) {
-        return res.status(404).send({status:false, message: 'Book not found' });
-      }
       book.reviews++
       await book.save()
       book=book.toObject()
@@ -67,6 +69,8 @@ let updateReview =async(req,res)=>{
   try {
     let{bookId,reviewId}=req.params
     
+    if(!bookId)return res.status(400).send({status:false,message: "bookid is not avaliable in param"})
+    if(!reviewId)return res.status(400).send({status:false,message: "reviewId is not avaliable in param"})
 
     if(!isValidObjectId(bookId))return res.status(400).send({status:false,message: "bookid is not valid"})
     if(!isValidObjectId(reviewId))return res.status(400).send({status:false,message: "reviewId is not valid"})
@@ -77,7 +81,7 @@ let updateReview =async(req,res)=>{
  
      
     let reviews = await ReviewModel.findOne({ _id: reviewId, isDeleted: false });
-    if(!reviews)return res.status(400).send({status:false,message:"review is not avavliable"})
+    if(!reviews)return res.status(400).send({status:false,message:"review is not avaliable"})
     
 
 

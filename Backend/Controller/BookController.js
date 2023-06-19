@@ -1,7 +1,7 @@
 let { isValidObjectId } = require("mongoose")
 let{BookModel}=require("../Models/BookModel")
 let {UserModel}=require("../Models/UserModel")
-let {isValid,validString,ValidISBN}=require("../Utils")
+let {isValid,validString,ValidISBN,isValidDate}=require("../Utils")
 
 let {ReviewModel}=require("../Models/ReviewModel")
 
@@ -75,9 +75,9 @@ let getbook=async(req,res)=>{
         
         let filters = {};
         
-        if (userId) filters.userId = userId;
-        if (category) filters.category = category;
-        if (subcategory) filters.subcategory = subcategory;
+        if (userId){ filters.userId = userId;}
+        if (category) {filters.category = category;}
+        if (subcategory) {filters.subcategory = subcategory;}
         
         let books = await BookModel.find({ isDeleted: false,...filters})
         .select({__v:0,createdAt:0,updatedAt:0})
@@ -111,45 +111,19 @@ let getBookDetails = async (req, res) =>{
         if (!book) {
             return res.status(404).send({status:false , message: 'Book not found' });
           }
+
+       let bookreview=await ReviewModel.find({bookId:book._id})
         
-          let reviewsData = [];
-           const bookData={  _id: book._id,
-            title: book.title,
-            excerpt: book.excerpt,
-            userId: book.userId,
-            category: book.category,
-            subcategory: book.subcategory,
-            isDeleted: book.isDeleted,
-            reviews: book.reviews,
-            releasedAt: book.releasedAt,
-            createdAt: book.createdAt,
-            updatedAt: book.updatedAt,  }
-          
-          if(book.reviews===0)return res.status(200).send({
-            status: true,
-            message: "Books list",
-            data: {
-              ...bookData,
-              reviewsData: reviewsData
-            }
-          });
-
-
-
-
-        let bookreview=await ReviewModel.find({bookId:book._id})
-        // console.log(bookreview)
-        return res.status(200).send({status:true,
+       let bookdetails= book.toObject()
+       
+       res.status(200).send({status:true,
         message: "Review added successfully",
         bookData: {
-          ...bookData,
-           reviewsData:[bookreview]
-        },
-      });
-         
-
-
-    } catch (error) {
+          ...bookdetails,
+           reviewsData:bookreview}
+       })
+      }
+    catch (error) {
         return res.status(500).send({status:false,message:error});
     }
 }
@@ -165,24 +139,53 @@ let updateBook = async (req, res) => {
     let { title, excerpt, releaseDate, ISBN } = req.body;
   
     try {
+
       let book = await BookModel.findOne({ _id: bookId, isDeleted: false });
   
       if (!book) {
 
         return res.status(404).send({status:false,message: 'Book not found' });
       }
-    //===========Authantication================================================
-   if(book.userId!=req.head)return res.status(401).send({status:false,message:"you are not autharize for updating this book"})
 
-    //=========================================================================
-  
-      // Update the book with the new values
-      book.title = title;
-      book.excerpt = excerpt;
-      book.releaseDate = releaseDate;
-      book.ISBN = ISBN;
-  
-      // Save the updated book
+         //===========Authantication================================================
+     if(book.userId!=req.head)return res.status(401).send({status:false,message:"you are not autharize for updating this book"})
+
+     //=========================================================================
+
+
+      if(title){
+
+        title=title.trim()
+        if(!isValid(title))return res.status(400).send({status:false,message:"title should be string"})
+        let data=await BookModel.findOne({title})
+        if(data) return res.status(400).send({status:false,message:"book with same title present"})
+        book.title = title;
+      }
+      if(excerpt){
+        excerpt=excerpt.trim() 
+        if(!validString(excerpt))return res.status(400).send({status:false,message:"excerpt string containing number"})
+        if(!isValid(excerpt))return res.status(400).send({status:false,message:"excerpt should be string"})
+
+        book.excerpt = excerpt;
+      }
+      if(releaseDate){
+
+         if(!isValidDate(releaseDate))return res.status(400).send({status:false,message:"date shoud be in YYYY-MM-DD formate"})
+
+        book.releaseDate = releaseDate;
+      }
+      if(ISBN){
+        ISBN =ISBN.trim()
+        if(!isValid(ISBN))return res.status(400).send({status:false,message:"ISBN should be string"})
+        if(!ValidISBN(ISBN))return res.status(400).send({status:false,message:"ISBN is not valid"})
+        let deta=await BookModel.findOne({ISBN})
+        if(deta) return res.status(400).send({status:false,message:"book with same ISBN present"})
+        book.ISBN = ISBN;
+
+      }
+
+ 
+      
       let updatedBook = await book.save();
   
       // Return the updated book
