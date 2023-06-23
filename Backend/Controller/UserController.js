@@ -109,8 +109,8 @@ let login=async(req,res)=>{
        if (!validator.isEmail(email))
       return res.status(400).send({ status: false, message: "email invalid" });
 
-
-
+      if(!password)  return res.status(400).send({ status: false, message: "password not present" });
+        
       // password = password.trim();
       // if (!isValidPassword(password))
       //   return res
