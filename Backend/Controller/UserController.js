@@ -15,7 +15,7 @@ let registration = async (req, res) => {
  
     if (
       !isValid(title) ||
-      !isValid(name) ||
+      !isValid(name)  ||
       !isValid(phone) ||
       !isValid(email) ||
       !isValid(password)
@@ -56,14 +56,14 @@ let registration = async (req, res) => {
 
 
       
-    password = password.trim();
-    if (!isValidPassword(password))
-      return res
-        .status(400)
-        .send({
-          status: false,
-          message: "password must be 8 to 15  character long a-z and number ",
-        });
+    // password = password.trim();
+    // if (!isValidPassword(password))
+    //   return res
+    //     .status(400)
+    //     .send({
+    //       status: false,
+    //       message: "password must be 8 to 15  character long a-z and number ",
+    //     });
 
 
         
@@ -126,10 +126,7 @@ let login=async(req,res)=>{
       if(user.password!=password)  return res.status(400).send({ status: false, message: "Wrong Password" })
 
       var token = jwt.sign({ userid:user._id}, 'shhhhh',{expiresIn: '2d'});
-      res.cookie("token",token)
-      // res.setHeader("token",token)
-
-      
+      res.cookie("token",token)    
       res.status(200).send({ status: true,data:{"token":token} });
 
         
