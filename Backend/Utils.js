@@ -22,7 +22,8 @@ const validateEmail = (email) => {
 const isValidPassword = (password) => {
    
 
-    const passwordRegex =(/^(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,15}$/);
+    // const passwordRegex =(/^(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,15}$/);
+    const passwordRegex =(/^.{8,15}$/);
     return passwordRegex.test(password);
 };
 const trim=(longURL)=>{
