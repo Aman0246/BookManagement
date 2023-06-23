@@ -13,8 +13,9 @@ let addReviewToBook=async(req,res)=>{
     if(!bookId) return res.status(400).send({status:false,message:"BookId is not in params"})
     if(!isValidObjectId(bookId))return res.status(400).send({status:false,message: "bookid is not valid"})
 
-    
+    console.log(bookId)
     let book = await BookModel.findOne({ _id: bookId, isDeleted: false });
+
 
 
 
@@ -44,11 +45,9 @@ let addReviewToBook=async(req,res)=>{
 
     
       let CreateReview=await ReviewModel.create({ review, rating, reviewedBy:reviewerName,bookId:bookId})
-         console.log(CreateReview)
-
-
 
       book.reviews++
+      
       await book.save()
       book=book.toObject()
       book.reviewsData=CreateReview
@@ -103,9 +102,6 @@ let updateReview =async(req,res)=>{
     if(!validString(reviewerName))return res.status(400).send({status:false,message:" reviewerName : name contain number"})
     reviews.reviewedBy=reviewerName
    }
-    
-   
-
 
     // Save the updated book document
     await reviews.save();
@@ -115,7 +111,7 @@ let updateReview =async(req,res)=>{
    book.reviewsData=reviewsData
     
 
-    return res.status(200).send({status:true,message:"Updated Successfully" ,Data:book });
+    return res.status(200).send({status:true,message:"Updated Successfully" ,Data:{book} });
 
     
   } catch (error) {

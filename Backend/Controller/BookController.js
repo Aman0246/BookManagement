@@ -111,18 +111,17 @@ let getBookDetails = async (req, res) =>{
         if (!book) {
             return res.status(404).send({status:false , message: 'Book not found' });
           }
+          
+       let data= await BookModel.aggregate([
+        {$lookup:{
+        from: "reviewmodels",
+        localField: "_id",
+        foreignField: "bookId",
+        as: "reviewsData"
+    }}])
 
-       let bookreview=await ReviewModel.find({bookId:book._id})
-        
-       let bookdetails= book.toObject()
-       
-       res.status(200).send({status:true,
-        message: "Review added successfully",
-        bookData: {
-          ...bookdetails,
-           reviewsData:bookreview}
-       })
-      }
+     res.status(200).send({status:true,data})
+        }
     catch (error) {
         return res.status(500).send({status:false,message:error});
     }
@@ -214,9 +213,10 @@ let deleteBook=async(req,res)=>{
     
     //======================================================================================================================
     if(data.isDeleted==true)return res.status(400).send({status:false,message:"book already deleted"})
+ 
     data.isDeleted=true;
 
-    await book.save();
+    await data.save();
     res.status(200).send({status:true,message:"Deleted Succesfully"})
     
     } catch (error) {
