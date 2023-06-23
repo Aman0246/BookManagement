@@ -110,14 +110,14 @@ let login=async(req,res)=>{
 
 
 
-      password = password.trim();
-      if (!isValidPassword(password))
-        return res
-          .status(400)
-          .send({
-            status: false,
-            message: " password invalid minlength-8,maxlength-15 number and a-z",
-          });
+      // password = password.trim();
+      // if (!isValidPassword(password))
+      //   return res
+      //     .status(400)
+      //     .send({
+      //       status: false,
+      //       message: " password invalid minlength-8,maxlength-15 number and a-z",
+      //     });
 
 
       let user=await UserModel.findOne({email})
