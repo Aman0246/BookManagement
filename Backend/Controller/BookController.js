@@ -9,10 +9,10 @@ let {ReviewModel}=require("../Models/ReviewModel")
 
 let createBook=async(req,res)=>{
 try {
-    let {title,excerpt,userId,ISBN,category,subcategory}=req.body
+    let {title,excerpt,userId,ISBN,category,subcategory,releasedAt}=req.body
 
-    if(!title||!excerpt||!userId||!ISBN||!category||!subcategory)return res.status(400).send({status:false,message:"one of this field  excerpt,userId,ISBN,category,subcategory is empty"})
-
+    if(!title||!excerpt||!userId||!ISBN||!category||!subcategory||!releasedAt)return res.status(400).send({status:false,message:"one of this field  excerpt,userId,ISBN,category,subcategory is empty"})
+    
     // title=title.trim()
     // if(!isValid(title))return res.status(400).send({status:false,message:"title should be string"})
     let data=await BookModel.findOne({title})
