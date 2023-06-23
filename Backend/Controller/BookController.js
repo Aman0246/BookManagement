@@ -36,7 +36,7 @@ try {
 
     // ISBN =ISBN.trim()
     // if(!isValid(ISBN))return res.status(400).send({status:false,message:"ISBN should be string"})
-    if(!ValidISBN(ISBN))return res.status(400).send({status:false,message:"ISBN is not valid"})
+    // if(!ValidISBN(ISBN))return res.status(400).send({status:false,message:"ISBN is not valid"})
     let deta=await BookModel.findOne({ISBN})
     if(deta) return res.status(400).send({status:false,message:"book with same ISBN present"})
 
@@ -155,8 +155,8 @@ let updateBook = async (req, res) => {
 
       if(title){
 
-        title=title.trim()
-        if(!isValid(title))return res.status(400).send({status:false,message:"title should be string"})
+        // title=title.trim()
+        // if(!isValid(title))return res.status(400).send({status:false,message:"title should be string"})
         let data=await BookModel.findOne({title})
         if(data) return res.status(400).send({status:false,message:"book with same title present"})
         book.title = title;
