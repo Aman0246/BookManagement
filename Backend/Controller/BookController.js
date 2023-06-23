@@ -11,43 +11,43 @@ let createBook=async(req,res)=>{
 try {
     let {title,excerpt,userId,ISBN,category,subcategory}=req.body
 
-    if(!excerpt||!userId||!ISBN||!category||!subcategory)return res.status(400).send({status:false,message:"one of this field  excerpt,userId,ISBN,category,subcategory is empty"})
+    if(!title||!excerpt||!userId||!ISBN||!category||!subcategory)return res.status(400).send({status:false,message:"one of this field  excerpt,userId,ISBN,category,subcategory is empty"})
 
-    title=title.trim()
-    if(!isValid(title))return res.status(400).send({status:false,message:"title should be string"})
+    // title=title.trim()
+    // if(!isValid(title))return res.status(400).send({status:false,message:"title should be string"})
     let data=await BookModel.findOne({title})
     if(data) return res.status(400).send({status:false,message:"book with same title present"})
 
 
 
-    excerpt=excerpt.trim() 
-    if(!validString(excerpt))return res.status(400).send({status:false,message:"excerpt string containing number"})
+    // excerpt=excerpt.trim() 
+    // if(!validString(excerpt))return res.status(400).send({status:false,message:"excerpt string containing number"})
     if(!isValid(excerpt))return res.status(400).send({status:false,message:"excerpt should be string"})
 
     
-    userId=userId.trim()
-    if(!isValid(userId))return res.status(400).send({status:false,message:"userId should be string"})
+    // userId=userId.trim()
+    // if(!isValid(userId))return res.status(400).send({status:false,message:"userId should be string"})
     if(!isValidObjectId(userId))return res.status(400).send({status:false,message:"userid is not valid"})
     let user=await UserModel.findOne({_id:userId})
   
     if(!user)return res.status(400).send({status:false,message:"user doesnot exist"})
 
 
-    ISBN =ISBN.trim()
-    if(!isValid(ISBN))return res.status(400).send({status:false,message:"ISBN should be string"})
+    // ISBN =ISBN.trim()
+    // if(!isValid(ISBN))return res.status(400).send({status:false,message:"ISBN should be string"})
     if(!ValidISBN(ISBN))return res.status(400).send({status:false,message:"ISBN is not valid"})
     let deta=await BookModel.findOne({ISBN})
     if(deta) return res.status(400).send({status:false,message:"book with same ISBN present"})
 
 
-    category=category.trim()
-    if(!isValid(category))return res.status(400).send({status:false,message:"category should be string"})
+    // category=category.trim()
+    // if(!isValid(category))return res.status(400).send({status:false,message:"category should be string"})
     if(!validString(category))return res.status(400).send({status:false,message:"category string containing number"})
         
     
     
-    subcategory=subcategory.trim()
-    if(!isValid(subcategory))return res.status(400).send({status:false,message:"subcategory should be string"})
+    // subcategory=subcategory.trim()
+    // if(!isValid(subcategory))return res.status(400).send({status:false,message:"subcategory should be string"})
     if(!validString(subcategory))return res.status(400).send({status:false,message:"subcategory string containing number"})
 
 

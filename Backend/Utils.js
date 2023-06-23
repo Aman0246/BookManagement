@@ -1,7 +1,7 @@
 
 function isValid (data) {
     // || data.trim().length ==0
-    if(typeof data !== "string"|| data.trim().length ==0) return false
+    if(typeof data !== "string") return false
     else return true
 }
  let isValidDate=(date)=>{
