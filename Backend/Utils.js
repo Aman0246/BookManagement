@@ -20,7 +20,9 @@ const validateEmail = (email) => {
 
 
 const isValidPassword = (password) => {
-    const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)[a-zA-Z\d]{8,15}$/;
+   
+
+    const passwordRegex =(/^(?=.*[a-zA-Z])(?=.*[^a-zA-Z0-9]).{8,15}$/);
     return passwordRegex.test(password);
 };
 const trim=(longURL)=>{
@@ -28,7 +30,7 @@ const trim=(longURL)=>{
 }
 
 const validPhone=(phone)=>{
-   const phoneRegix=/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/ 
+   const phoneRegix=(/^[\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6}$/) 
    return phoneRegix.test(phone)
 }
 const validPin=(pincode)=>{
