@@ -16,7 +16,6 @@ let registration = async (req, res) => {
     if (
       !isValid(title) ||
       !isValid(name) ||
-      !isValid(phone) ||
       !isValid(email) ||
       !isValid(password)
     )
@@ -41,7 +40,7 @@ let registration = async (req, res) => {
 
 
 
-    phone = phone.trim();
+    // phone = phone.trim();
     if (!Validator.mobile(phone))
       return res
         .status(400)
@@ -56,7 +55,7 @@ let registration = async (req, res) => {
 
 
       
-    password = password.trim();
+    // password = password.trim();
     if (!isValidPassword(password))
       return res
         .status(400)
@@ -67,7 +66,7 @@ let registration = async (req, res) => {
 
 
         
-     pincode=address.pincode.trim()
+    //  pincode=address.pincode.trim()
     if (!Validator.pincode(address.pincode))
       return res
         .status(400)
