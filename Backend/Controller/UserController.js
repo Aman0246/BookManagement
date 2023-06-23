@@ -104,8 +104,9 @@ let login=async(req,res)=>{
     try {
         let{email,password}=req.body
         
-    email = email.trim();
-    if (!validator.isEmail(email))
+      if(!email)  return res.status(400).send({ status: false, message: "email not present" });
+       email = email.trim();
+       if (!validator.isEmail(email))
       return res.status(400).send({ status: false, message: "email invalid" });
 
 
@@ -123,7 +124,7 @@ let login=async(req,res)=>{
       let user=await UserModel.findOne({email})
       if(!user)   return res.status(400).send({ status: false, message: "user is not Registerd" });   
 
-      if(user.password!=password)  return res.status(400).send({ status: false, message: "Wrong Password" })
+      if(user.password!=password)  return res.status(401).send({ status: false, message: "Wrong Password" })
 
       var token = jwt.sign({ userid:user._id}, 'shhhhh',{expiresIn: '2d'});
       res.cookie("token",token)    
