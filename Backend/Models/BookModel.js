@@ -17,8 +17,7 @@ const BookSchema = new mongoose.Schema(
     deletedAt: { type: Date, trim: true },
     isDeleted: { type: Boolean, default: false, trim: true },
     releasedAt: { type: Date, required: true, trim: true },
-    // reviewsData:[]
-  },
+    },
   { timestamps: true }
 );
 

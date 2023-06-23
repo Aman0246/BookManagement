@@ -10,8 +10,8 @@ const {addReviewToBook,updateReview,deleteReview }=require("../Controller/Review
 
 routes.post("/register",registration)
 routes.post("/login",login)
-routes.post("/books",tokenVerify,  createBook)
-routes.get("/books",tokenVerify,   getbook)
+routes.post("/books", createBook)
+routes.get("/books",tokenVerify  ,   getbook)
 routes.get("/books/:bookId",tokenVerify,   getBookDetails)
 routes.put("/books/:bookId",tokenVerify,   updateBook)
 routes.delete("/books/:bookId",tokenVerify,   deleteBook)

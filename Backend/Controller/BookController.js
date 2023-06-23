@@ -29,6 +29,7 @@ try {
     // if(!isValid(userId))return res.status(400).send({status:false,message:"userId should be string"})
     if(!isValidObjectId(userId))return res.status(400).send({status:false,message:"userid is not valid"})
     let user=await UserModel.findOne({_id:userId})
+
   
     if(!user)return res.status(400).send({status:false,message:"user doesnot exist"})
 
@@ -51,7 +52,7 @@ try {
     if(!validString(subcategory))return res.status(400).send({status:false,message:"subcategory string containing number"})
 
 
-    let today = new Date().toISOString().slice(0, 10)
+    let today = new Date().toISOString().slice(0,10)
     let createdBook=await BookModel.create({title,excerpt,userId,ISBN,category,subcategory,releasedAt:today})
     
     res.status(201).send({status:true,data:createdBook})
